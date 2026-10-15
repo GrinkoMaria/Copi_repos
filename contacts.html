@@ -1,56 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <!-- Google tag (gtag.js) — подставьте свой ID вместо G-XXXXXXXXXX -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L72V8EVJ6L"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-L72V8EVJ6L');
-  </script>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Учебная лаборатория веб-аналитики: страницы, переходы и события.">
   <title>Contacts — GA4 Lab</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="js/script.js" defer></script>
-  <script src="js/metrics.js" defer></script>
 </head>
 <body>
-  <header><a class="brand" href="index.html">GA4<span>LAB</span></a><nav aria-label="Основная навигация"><a href="index.html">Home</a><a href="about.html">About</a><a href="contacts.html" aria-current="page">Contacts</a></nav></header>
-  <main><p class="eyebrow">ОП.03 / ЛАБОРАТОРИЯ ВЕБ-АНАЛИТИКИ</p><h1>Давайте<br><em>оставаться на связи.</em></h1><p class="lead">Последняя остановка маршрута. Здесь можно оставить учебную заявку.</p><div class="contact-grid">
-<!-- ВАШ_APPS_SCRIPT_URL замените адресом Web App, который оканчивается на /exec -->
-<form id="lead-form" action="https://script.google.com/macros/s/AKfycbymGbo32XuQBcH6fOHAl_c9sNoxWU436OZg9V1RaRVfiasZir_PO58I5_Fh7CMdeBCazw/exec" method="POST" target="submission-frame">
-  <label>Имя
-    <input name="name" required maxlength="200" autocomplete="off" placeholder="Иван Тестов">
-  </label>
-  <label>Email
-    <input name="email" type="email" required maxlength="200" autocomplete="off" placeholder="student@example.com">
-  </label>
-  <label>Направление
-    <select name="direction" required>
-      <option value="">Выберите направление</option>
-      <option value="frontend">Frontend</option>
-      <option value="backend">Backend</option>
-      <option value="data">Data</option>
-    </select>
-  </label>
-  <input type="hidden" name="request_id" id="request_id">
-  <input type="hidden" name="utm_source" id="utm_source">
-  <input type="hidden" name="utm_medium" id="utm_medium">
-  <input type="hidden" name="utm_campaign" id="utm_campaign">
-  <button class="button" type="submit">Отправить заявку <span>↗</span></button>
-  <button type="reset">Новая заявка</button>
-  <p id="form-status" role="status"></p>
-  <small>Учебная форма: используйте только вымышленные имя и email.</small>
-</form>
-<iframe name="submission-frame" id="submission-frame" title="Ответ приёмника заявок" hidden></iframe>
-<aside><span class="tag">ВАШ МАРШРУТ</span><h2>Home → About<br>→ Contacts</h2><p>Все три страницы имеют собственный адрес. После установки тега их просмотры можно искать в отчётах.</p><a class="secondary" href="index.html">Начать маршрут заново →</a></aside></div></main>
-  <footer><span>GA4 Lab · Учебный сайт</span><span>HTML / CSS / JavaScript</span></footer>
+
+<header>
+  <a class="brand" href="index.html">GA4<span>LAB</span></a>
+  <nav aria-label="Основная навигация">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contacts.html">Contacts</a>
+  </nav>
+</header>
+
+<main>
+  <p class="eyebrow">ОП.03 / ЛАБОРАТОРИЯ ВЕБ-АНАЛИТИКИ</p>
+  <h1>Давайте<br><em>оставаться на связи.</em></h1>
+  <p class="lead">Последняя остановка маршрута. Здесь можно проверить взаимодействие с учебной формой.</p>
+
+  <form id="lead-form"
+        action="https://script.google.com/macros/s/AKfycbx7OYAucvxbji10TbG9-qhJoLZkvtJTtKNkMHlBQkpvhCXPy9lHB6XJKOjZbRoAapQ/exec"
+        method="POST"
+        target="submission-frame">
+
+    <!-- Скрытые поля -->
+    <input type="hidden" name="request_id" id="request_id" value="">
+    <input type="hidden" name="utm_source" id="utm_source" value="">
+    <input type="hidden" name="utm_medium" id="utm_medium" value="">
+    <input type="hidden" name="utm_campaign" id="utm_campaign" value="">
+    <input type="hidden" name="utm_content" id="utm_content" value="">
+
+    <!-- Поля пользователя -->
+    <label>Имя
+      <input name="name" required maxlength="200" autocomplete="off" placeholder="Иван Тестов">
+    </label>
+
+    <label>Телефон
+      <input name="phone" type="tel" required maxlength="200" autocomplete="off" placeholder="+7 (999) 123-45-67">
+    </label>
+
+    <label>Email
+      <input name="email" type="email" maxlength="200" autocomplete="off" placeholder="student@example.com">
+    </label>
+
+    <label>Направление
+      <select name="direction" required>
+        <option value="">Выберите направление</option>
+        <option value="frontend">Frontend</option>
+        <option value="backend">Backend</option>
+        <option value="data">Data</option>
+      </select>
+    </label>
+
+    <label>Уровень
+      <select name="level" required>
+        <option value="">Выберите уровень</option>
+        <option value="zero">С нуля</option>
+        <option value="base">Базовый</option>
+        <option value="advanced">Продолжающий</option>
+      </select>
+    </label>
+
+    <label>Удобное время
+      <select name="preferred_time" required>
+        <option value="">Выберите время</option>
+        <option value="weekday_evening">Будни вечером</option>
+        <option value="weekend">Выходные</option>
+      </select>
+    </label>
+
+    <!-- Кнопки -->
+    <button type="submit" class="btn">Проверить форму</button>
+    <button type="reset" class="btn btn-ghost">Новая заявка</button>
+
+    <p id="form-status" role="status"></p>
+    <small>Учебная форма: введите только вымышленные имя и email.</small>
+  </form>
+
+  <!-- Скрытая рамка для ответа Apps Script -->
+  <iframe name="submission-frame" hidden title="Ответ сервера"></iframe>
+
+</main>
+
+<footer>
+  <p>GA4 Lab — Учебный сайт</p>
+  <p>HTML / CSS / JavaScript</p>
+</footer>
+
 </body>
 </html>
-
-<!-- TEST 123 -->Ы

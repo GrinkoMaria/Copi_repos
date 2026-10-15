@@ -1,54 +1,64 @@
 'use strict';
-// Итоговый js/script.js после темы 7: форма заявок + CTA из темы 6.
-// Google Tag устанавливается отдельно в head каждой HTML-страницы.
+
 (() => {
   const leadForm = document.querySelector('#lead-form');
-  if (!leadForm) return;
+  if (!leadForm) return; // Форма есть только на contacts.html
+
+  // 1. Читаем UTM-метки из адреса
   const params = new URLSearchParams(window.location.search);
-  const defaults = {utm_source:'direct', utm_medium:'none', utm_campaign:'not_set'};
+  const defaults = {
+    utm_source: 'direct',
+    utm_medium: 'none',
+    utm_campaign: 'not_set',
+    utm_content: 'not_set'
+  };
+
   for (const [key, fallback] of Object.entries(defaults)) {
-    leadForm.elements.namedItem(key).value = params.get(key)?.trim() || fallback;
+    const field = leadForm.elements.namedItem(key);
+    if (field) {
+      field.value = params.get(key)?.trim() || fallback;
+    }
   }
+
+  // 2. Обработчик отправки формы
   const requestId = leadForm.elements.namedItem('request_id');
-  leadForm.addEventListener('submit', event => {
-    // Это защита от случайной отправки неполностью настроенного примера.
-    if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(leadForm.action)) {
+
+  leadForm.addEventListener('submit', (event) => {
+    // Проверка адреса Apps Script
+    const action = leadForm.getAttribute('action');
+    const isValidUrl = /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(action);
+
+    if (!isValidUrl) {
       event.preventDefault();
-      document.querySelector('#form-status').textContent = 'https://script.google.com/macros/s/AKfycbymGbo32XuQBcH6fOHAl_c9sNoxWU436OZg9V1RaRVfiasZir_PO58I5_Fh7CMdeBCazw/exec';
+      document.getElementById('form-status').textContent = 'Сначала укажите URL Apps Script в action формы.';
       return;
     }
-    // Повторная доставка той же заявки сохраняет ID. Новый ID — после reset.
-    if (!requestId.value) requestId.value = 'REQ-' + crypto.randomUUID().toUpperCase();
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'generate_lead', {lead_source:'contact_form'});
+
+    // Генерируем request_id, если его ещё нет
+    if (!requestId.value) {
+      requestId.value = 'REQ-' + crypto.randomUUID().toUpperCase();
     }
-    document.querySelector('#form-status').textContent =
-      'POST отправляется. Подтвердите сохранение по request_id в таблице: ' + requestId.value;
-    // На штатном пути preventDefault() НЕ вызываем: браузер отправляет POST.
-    // Событие GA4 отражает попытку отправки, а не ответ сервера.
+
+    // Отправляем событие в GA4
+    if (typeof window.gtag === 'function') {
+      gtag('event', 'generate_lead', {
+        lead_source: 'contact_form'
+      });
+    }
+
+    // Показываем номер заявки
+    document.getElementById('form-status').textContent = 'Заявка отправлена. Номер: ' + requestId.value;
   });
+
+  // 3. Обработчик кнопки "Новая заявка"
   leadForm.addEventListener('reset', () => {
     setTimeout(() => {
       requestId.value = '';
       for (const [key, fallback] of Object.entries(defaults)) {
-        leadForm.elements.namedItem(key).value = params.get(key)?.trim() || fallback;
+        const field = leadForm.elements.namedItem(key);
+        if (field) field.value = fallback;
       }
-      document.querySelector('#form-status').textContent = 'Можно заполнить новую заявку.';
+      document.getElementById('form-status').textContent = 'Можно заполнить новую заявку.';
     }, 0);
   });
 })();
-
-// CTA из существующего сайта темы 6 — без изменений.
-const programCta = document.querySelector('#program-cta');
-if (programCta) {
-  programCta.addEventListener('click', () => {
-    document.querySelector('#program-preview').hidden = false;
-    if (typeof gtag === 'function') {
-      gtag('event', 'cta_click', {
-        button_name: 'program',
-        page_section: 'hero'
-      });
-    }
-  });
-}
-
